@@ -39,12 +39,12 @@ jobs:
           aws-region: ap-northeast-2
 
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-2 ./build.zip s3://$BUCKET_NAME/$PROJECT_NAME/build.zip
+        run: aws s3 cp --region ap-northeast-2 ./build.zip s3://ddang-test-cicd-bucket/ddang-test-cicd/build.zip
 
       - name: Code Deploy To EC2 instance
         run: aws deploy create-deployment
-          --application-name $CODE_DEPLOY_APP_NAME
+          --application-name ddang-test-cicd-codedeploy
           --deployment-config-name CodeDeployDefault.AllAtOnce
-          --deployment-group-name $DEPLOYMENT_GROUP_NAME
-          --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=build.zip
+          --deployment-group-name ddang-test-cicd-deploy-group
+          --s3-location bucket=ddang-test-cicd-bucket,bundleType=zip,key=build.zip
 # --------------------------추가
