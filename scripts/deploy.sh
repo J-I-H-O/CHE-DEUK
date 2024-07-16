@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-REPOSITORY=/home/ubuntu/build
+REPOSITORY=/home/ubuntu/deploy-test
 cd $REPOSITORY
 
-APP_NAME=ddang-test
+APP_NAME=deploy-test
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 

@@ -2,10 +2,10 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ubuntu/deploy
+    destination: /home/ubuntu/deploy-test
     overwrite: yes
 permissions:
-  - object: /home/ubuntu/deploy
+  - object: /home/ubuntu/deploy-test/
     owner: ubuntu
     group: ubuntu
     mode: 755
