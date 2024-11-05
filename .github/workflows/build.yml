@@ -1,0 +1,55 @@
+name: test_and_build
+
+on:
+  push:
+    branches: [develop] # PR에서만 동작하도록 삭제 필요
+  pull_request:
+    branches: [develop]
+
+  workflow_dispatch: # 직접 Actions 탬에서 workflow 실행 가능하도록 설정
+
+env:
+  PROJECT_NAME: deploy-test
+  BUCKET_NAME: ddang-test-cicd-bucket
+  CODE_DEPLOY_APP_NAME: ddang-test-cicd-codedeploy
+  DEPLOYMENT_GROUP_NAME: ddang-test-cicd-deploy-group
+  BUILD_RESULT_NAME: cicd-build-result
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: corretto
+          java-version: 17
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew clean build
+
+      - name: Make Zip File
+        run: zip -qq -r ./$BUILD_RESULT_NAME.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_PRIVATE_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$BUILD_RESULT_NAME.zip s3://$BUCKET_NAME/$PROJECT_NAME/$BUILD_RESULT_NAME.zip
+
+      - name: Code Deploy To EC2 instance
+        run: aws deploy create-deployment
+          --application-name $CODE_DEPLOY_APP_NAME
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --deployment-group-name $DEPLOYMENT_GROUP_NAME
+          --s3-location bucket=$BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$BUILD_RESULT_NAME.zip

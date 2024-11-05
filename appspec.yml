@@ -1,0 +1,16 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ubuntu/deploy-test
+    overwrite: yes
+permissions:
+  - object: /home/ubuntu/deploy-test/
+    owner: ubuntu
+    group: ubuntu
+    mode: 755
+hooks:
+  AfterInstall:
+    - location: scripts/deploy.sh
+      timeout: 1000
+      runas: ubuntu
