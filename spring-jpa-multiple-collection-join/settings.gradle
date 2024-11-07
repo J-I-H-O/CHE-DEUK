@@ -1,0 +1,5 @@
+rootProject.name = 'performance-improvement'
+include 'batch-size'
+include 'multiple-collection-join'
+include 'multiple-bag-fetch'
+
