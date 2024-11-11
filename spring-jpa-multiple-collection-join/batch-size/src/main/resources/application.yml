@@ -1,0 +1,12 @@
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true   # hibernate 초기화 이후 data.sql이 실행되도록 설정org.hibernate.type.descriptor.sql=trace
+
+logging.level:
+  org.hibernate.orm.jdbc.bind: trace
