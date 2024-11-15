@@ -1,2 +1,3 @@
 rootProject.name = 'Java'
+include 'java-strategy-pattern'
 
