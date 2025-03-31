@@ -18,8 +18,17 @@ public class MdcFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        log.info("filter 동작!");
-        MDC.put("traceId", UUID.randomUUID().toString());
-        chain.doFilter(request, response);
+        try {
+            log.info("filter 동작!");
+            MDC.put("traceId", UUID.randomUUID().toString());
+            chain.doFilter(request, response);
+        } finally {
+            MDC.clear();
+        }
+    }
+
+    @Override
+    public void destroy() {
+        Filter.super.destroy();
     }
 }
