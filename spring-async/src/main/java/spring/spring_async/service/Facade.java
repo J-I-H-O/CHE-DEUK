@@ -20,7 +20,7 @@ public class Facade {
     public void process() {
         this.threadName = Thread.currentThread().getName();
         syncService.process();
-        asyncService.process();
+        asyncService.processAsync();
     }
 
     public String getFacadeThreadName() {

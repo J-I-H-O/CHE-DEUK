@@ -18,11 +18,36 @@ public class AsyncService {
         this.notificationRepository = notificationRepository;
     }
 
+    @Transactional
+    public void syncToAsync() {
+        log.info("outer sync method thread : {}", Thread.currentThread().getName());
+        processAsync();
+    }
+
     @Async
     @Transactional
-    public void process() {
+    public void asyncToSync() {
+        log.info("outer async method thread : {}", Thread.currentThread().getName());
+        processSync();
+    }
+
+    @Async
+    @Transactional
+    public void asyncToAsync() {
+        log.info("outer async method thread : {}", Thread.currentThread().getName());
+        processAsync();
+    }
+
+    @Transactional
+    public void processSync() {
+        log.info("inner sync method thread : {}", Thread.currentThread().getName());
+    }
+
+    @Async
+    @Transactional
+    public void processAsync() {
         this.threadName = Thread.currentThread().getName();
-        log.info("사용 중인 스레드: {}", threadName);
+        log.info("inner async method thread : {}", threadName);
 
         Notification notification = new Notification("작성한 글에 댓글이 달렸어요~");
         notificationRepository.save(notification);
