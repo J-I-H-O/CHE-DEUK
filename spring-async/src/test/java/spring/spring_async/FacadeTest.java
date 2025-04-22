@@ -2,10 +2,13 @@ package spring.spring_async;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import spring.spring_async.domain.Notification;
+import spring.spring_async.repository.NotificationRepository;
 import spring.spring_async.service.Facade;
 
 @SpringBootTest
@@ -13,6 +16,9 @@ public class FacadeTest {
 
     @Autowired
     private Facade facade;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @DisplayName("비동기 요청은 별도의 스레드에서 실행된다.")
     @Test
@@ -39,8 +45,19 @@ public class FacadeTest {
     @DisplayName("비동기 처리 중 예외가 발생한 경우, outer 트랜잭션은 롤백되지 않는다.")
     @Test
     public void noRollbackOnOuterTransaction() {
+        /**
+         * SyncService: save 1회
+         * AsyncService: save 1회 이후 예외 발생 (롤백)
+         */
+        Notification syncNotification = new Notification("sync");
+        Notification asyncNotification = new Notification("async");
 
+        facade.processButAsyncException(syncNotification, asyncNotification);
+
+        List<Notification> found = notificationRepository.findAll();
+
+        assertThat(found).hasSize(1);
+        assertThat(found).extracting(notification -> notification.getBody())
+                .containsExactly("sync");
     }
-
-    // TODO: async에서 예외 발생 시 outer 트랜잭션 롤백 x
 }

@@ -22,14 +22,13 @@ public class SyncService {
     }
 
     @Transactional
-    public void process() {
+    public void process(Notification notification) {
         this.threadName = Thread.currentThread().getName();
         this.transactionName = TransactionSynchronizationManager.getCurrentTransactionName();
 
         log.info("inner sync method thread : {}", this.threadName);
         log.info("inner sync method transaction : {}", this.transactionName);
 
-        Notification notification = new Notification("작성한 글에 댓글이 달렸어요~");
         notificationRepository.save(notification);
     }
 }

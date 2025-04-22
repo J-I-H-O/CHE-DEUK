@@ -25,7 +25,7 @@ public class AsyncService {
     @Transactional
     public void syncToAsync() {
         log.info("outer sync method thread : {}", Thread.currentThread().getName());
-        processAsync();
+        processAsync(new Notification());
     }
 
     @Async
@@ -39,7 +39,7 @@ public class AsyncService {
     @Transactional
     public void asyncToAsync() {
         log.info("outer async method thread : {}", Thread.currentThread().getName());
-        processAsync();
+        processAsync(new Notification());
     }
 
     @Transactional
@@ -49,14 +49,27 @@ public class AsyncService {
 
     @Async
     @Transactional
-    public void processAsync() {
+    public void processAsync(Notification notification) {
         this.threadName = Thread.currentThread().getName();
         this.transactionName = TransactionSynchronizationManager.getCurrentTransactionName();
 
         log.info("inner async method thread : {}", threadName);
         log.info("inner async method transaction : {}", transactionName);
 
-        Notification notification = new Notification("작성한 글에 댓글이 달렸어요~");
         notificationRepository.save(notification);
+    }
+
+    @Async
+    @Transactional
+    public void processAsyncException(Notification notification) {
+        this.threadName = Thread.currentThread().getName();
+        this.transactionName = TransactionSynchronizationManager.getCurrentTransactionName();
+
+        log.info("inner async method thread : {}", threadName);
+        log.info("inner async method transaction : {}", transactionName);
+
+        notificationRepository.save(notification);
+
+        throw new IllegalStateException("트랜잭션 " + transactionName + "가 롤백 되었습니다.");
     }
 }
