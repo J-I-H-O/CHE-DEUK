@@ -1,0 +1,4 @@
+[submodule "book-study"]
+	path = book-study
+	url = https://github.com/J-I-H-O/book-study.git
+	branch = master

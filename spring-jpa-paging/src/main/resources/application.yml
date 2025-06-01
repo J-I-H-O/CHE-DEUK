@@ -1,0 +1,11 @@
+spring:
+  sql:
+    init:
+      mode: always
+
+  jpa:
+    defer-datasource-initialization: true # hibernate? DLL ?? ?? data.sql ????? ????? ??
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
