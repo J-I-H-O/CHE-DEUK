@@ -1,0 +1,45 @@
+plugins {
+    id 'application'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation libs.guava
+
+    /**
+     * <spring-batch-core>
+     * Job, Step, JobRepository, JobLauncher등의 Spring Batch 핵심 컴포넌트 + ItemReader, ItemWriter 등 데이터 처리를 위한 인프라 컴포넌트 포함
+     * spring-context, spring-jdbc 등 기타 Spring 관련 의존성은 spring-batch-core에서 자동으로 포함해줌
+     *
+     * <h2database>
+     * Spring Batch는 Job과 Step의 실행 정보를 DB에 저장하므로, 데이터베이스 의존성이 필요함. 예제에서는 H2 사용
+     */
+    implementation 'org.springframework.batch:spring-batch-core:5.2.2'
+    implementation 'com.h2database:h2:2.3.232'
+}
+
+application {
+//    mainClass = 'com.batch.spring.pure.App'
+
+    /**
+     * mainClass는 애플리케이션의 진입점이 되는 클래스를 지정
+     * CommandLineJobRunner는 Spring Batch에서 제공하는 유틸 클래스로, CLI에서 배치 잡을 실행할 수 있게 해줌
+     * 해당 클래스를 통해 우리가 작성한 배치 잡을 터미널에서 직접 실행할 수 있음
+     */
+    mainClass = 'org.springframework.batch.com.launch.support.CommandLineJobRunner'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
